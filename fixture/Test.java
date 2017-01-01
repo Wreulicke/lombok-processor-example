@@ -1,6 +1,5 @@
+import com.wreulicke.lombok.javac.var;
 public class Test {
-  @interface var {
-  }
 
   public var a = 10;
   public var b = "bbb";

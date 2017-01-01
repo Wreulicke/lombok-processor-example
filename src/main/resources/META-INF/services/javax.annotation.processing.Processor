@@ -1,4 +1,3 @@
 com.wreulicke.lombok.javac.ScalaProcessor
 com.wreulicke.lombok.javac.ImportShowProcessor
 #com.wreulicke.lombok.javac.TestVisitProcessor
-com.wreulicke.lombok.javac.VarProcessor
