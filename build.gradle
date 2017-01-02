@@ -36,9 +36,11 @@ dependencies {
     compile group: 'org.javassist', name: 'javassist', version: '3.21.0-GA'
     compile group: 'cglib', name: 'cglib', version: '3.2.4'
     compile group: 'net.bytebuddy', name: 'byte-buddy-dep', version: '1.5.10'
-
+    testCompile 'com.google.testing.compile:compile-testing:0.10'
     testCompile 'junit:junit:4.12'
-    compile 'org.scala-lang:scala-library:2.11.1'
+    testCompile 'org.scalatest:scalatest_2.11:3.0.0'
+    testRuntime files("${System.properties['java.home']}/../lib/tools.jar")
+    compile 'org.scala-lang:scala-library:2.11.7'
 }
 task testBuild(type: Exec, dependsOn: jar) {
     def javassist = configurations
