@@ -79,6 +79,8 @@ class ScalaProcessor extends AbstractProcessor {
         case Kind.FLOAT_LITERAL => success(maker.Type(new JCPrimitiveType(TypeTag.FLOAT, null)))
         case Kind.CHAR_LITERAL => success(maker.Type(new JCPrimitiveType(TypeTag.CHAR, null)))
         case Kind.NULL_LITERAL => fail("cannot use here")
+        // FIXME todo implementation
+        case Kind.NEW_CLASS => fail("cannot use here")
         case _ => fail("cannot use here")
       }
     }

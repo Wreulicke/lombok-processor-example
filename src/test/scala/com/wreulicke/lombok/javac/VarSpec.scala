@@ -10,9 +10,10 @@ import org.scalatest.junit.JUnitRunner
 
 class VarSpec extends FunSpec {
   describe("first test") {
-    Truth.assertAbout(JavaSourceSubjectFactory.javaSource())
+    Truth.assertAbout(JavaSourceSubjectFactory.javaSource)
     .that(JavaFileObjects.forResource("Test.java"))
     .processedWith(new ScalaProcessor)
     .compilesWithoutError()
   }
+  
 }
