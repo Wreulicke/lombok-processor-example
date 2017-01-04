@@ -32,6 +32,11 @@ import com.sun.tools.javac.code.TypeTag
 import javax.tools.Diagnostic
 import com.sun.tools.javac.tree.JCTree.JCIdent
 import scala.util.Success
+import com.sun.source.tree.AssignmentTree
+import com.sun.source.tree.CompilationUnitTree
+import com.sun.tools.javac.tree.JCTree.JCNewClass
+import com.sun.tools.javac.tree.JCTree.JCFieldAccess
+import com.sun.source.tree.LiteralTree
 
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes(Array("*"))
@@ -43,12 +48,12 @@ class ScalaProcessor extends AbstractProcessor {
     val elements = roundEnv.getRootElements.asScala
     elements.foreach { element =>
       val unit = trees.getPath(element).getCompilationUnit
-      unit.accept(Visitor(processingEnv, env), null.asInstanceOf[Unit])
+      unit.accept(Visitor(processingEnv, env, unit), null.asInstanceOf[Unit])
     }
 
     false
   }
-  case class Visitor(roundEnv: ProcessingEnvironment, env: JavacProcessingEnvironment) extends TreeScanner[Unit, Unit] {
+  case class Visitor(roundEnv: ProcessingEnvironment, env: JavacProcessingEnvironment, unit: CompilationUnitTree) extends TreeScanner[Unit, Unit] {
     private def elements = JavacElements.instance(env.getContext)
     private def maker: TreeMaker = TreeMaker.instance(env.getContext)
     def string(): JCExpression = {
@@ -60,16 +65,27 @@ class ScalaProcessor extends AbstractProcessor {
     private def success(exp: JCExpression): SuccessOrFail = Right(Some(exp))
     private def fail(msg: String): SuccessOrFail = Left(msg)
 
-    private def convertType(declaration: JCVariableDecl): SuccessOrFail = {
+    private def convertType(implicit declaration: JCVariableDecl): SuccessOrFail = {
       if (declaration.vartype.toString == "var") {
         val initializer = declaration.getInitializer
-        declaration.getInitializer.getTag match {
-          case Tag.LITERAL => convertType(initializer.getKind)
+        val tag = initializer.getTag
+        tag match {
+          case Tag.LITERAL => convertTypeFromLiteral(initializer.getKind)
+          case Tag.NEWCLASS => convertTypeFromInitializer(initializer.asInstanceOf[JCNewClass])
           case _ => fail("cannot use here")
         }
       } else success()
     }
-    private def convertType(kind: Kind): SuccessOrFail = {
+    
+    private def convertTypeFromInitializer(initializer: JCNewClass): SuccessOrFail = {
+      initializer.clazz match {
+        case id: JCIdent => success(maker.Ident(elements.getName(id.name)))
+        case fieldAccess: JCFieldAccess => success(fieldAccess)
+        case _ => fail("cannot use here")
+      }
+    }
+    
+    private def convertTypeFromLiteral(kind: Kind)(implicit declaration: JCVariableDecl): SuccessOrFail = {
       kind match {
         case Kind.STRING_LITERAL => success(string())
         case Kind.INT_LITERAL => success(maker.Type(new JCPrimitiveType(TypeTag.INT, null)))
@@ -79,12 +95,11 @@ class ScalaProcessor extends AbstractProcessor {
         case Kind.FLOAT_LITERAL => success(maker.Type(new JCPrimitiveType(TypeTag.FLOAT, null)))
         case Kind.CHAR_LITERAL => success(maker.Type(new JCPrimitiveType(TypeTag.CHAR, null)))
         case Kind.NULL_LITERAL => fail("cannot use here")
-        // FIXME todo implementation
-        case Kind.NEW_CLASS => fail("cannot use here")
         case _ => fail("cannot use here")
       }
     }
-    def modifyTypeIfNeeded(declaration: JCVariableDecl): Unit = {
+
+    private def modifyTypeIfNeeded(declaration: JCVariableDecl): Unit = {
       convertType(declaration) match {
         case Right(typ) => {
           typ.foreach { typ =>

@@ -27,9 +27,6 @@ import javassist.util.proxy.ProxyObject;
 @SupportedAnnotationTypes("*")
 public class TestVisitProcessor extends AbstractProcessor {
 
-  @SuppressWarnings("unchecked")
-  public TestVisitProcessor() {}
-
   @Override
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
     JavacProcessingEnvironment environment = (JavacProcessingEnvironment) processingEnv;
