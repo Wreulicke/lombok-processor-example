@@ -26,7 +26,6 @@ import javassist.util.proxy.ProxyObject;
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes("*")
 public class TestVisitProcessor extends AbstractProcessor {
-
   @Override
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
     JavacProcessingEnvironment environment = (JavacProcessingEnvironment) processingEnv;

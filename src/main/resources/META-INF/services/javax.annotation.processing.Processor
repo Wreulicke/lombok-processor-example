@@ -1,3 +1,4 @@
 com.wreulicke.lombok.javac.ScalaProcessor
+com.wreulicke.lombok.javac.FizzBuzzProcessor
 com.wreulicke.lombok.javac.ImportShowProcessor
 #com.wreulicke.lombok.javac.TestVisitProcessor

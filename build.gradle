@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'scala'
 apply plugin: 'eclipse'
-apply plugin: "com.github.maiflai.scalatest"
+//apply plugin: "com.github.maiflai.scalatest"
 
 buildscript {
   repositories {
@@ -48,6 +48,9 @@ dependencies {
     compile group: 'cglib', name: 'cglib', version: '3.2.4'
     compile group: 'net.bytebuddy', name: 'byte-buddy-dep', version: '1.5.10'
     compile 'org.scala-lang:scala-library:2.11.8'
+    compile 'javax.validation:validation-api:2.0.0.Alpha1'
+    compile 'org.hibernate:hibernate-validator:5.4.0.Final'
+    compile 'org.glassfish:javax.el:3.0.1-b08'
     
     testCompile 'com.google.testing.compile:compile-testing:0.10'
     testCompile 'junit:junit:4.12'
